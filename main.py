@@ -7,7 +7,7 @@ class Labyrinth:
         self.map = []
         with open(file_name) as file:
             for line in file:
-                self.map.append(list(map(int, list(line)[:-1])))
+                self.map.append(list(line))
         print(self.map)
         # значения по умолчанию
         self.left = 10
@@ -25,9 +25,9 @@ class Labyrinth:
         for i in range(len(self.map)):
             x = self.top
             for j in range(len(self.map[i])):
-                if self.map[i][j]:
+                if self.map[i][j] == '#':
                     pygame.draw.rect(scr, (255, 255, 255), (x, y, self.cell_size, self.cell_size))
-                if self.map[i][j] == 0:
+                if self.map[i][j] == '.':
                     pygame.draw.rect(scr, (0, 0, 0), (x, y, self.cell_size, self.cell_size))
                 x += self.cell_size
             y += self.cell_size
