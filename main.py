@@ -2,12 +2,23 @@ import pygame
 
 import os
 
-pygame.init()
-size = width, height = 800, 800
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption('Game')
+# consts
+
+# margin for upper left corner
+TOP = 0
+LEFT = 0
+CELL_SIZE = 50
+SIZE = WIDTH, HEIGHT = 800, 800
+
+MAX_X = None
+MAX_Y = None
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 
 def load_image(name, color_key=None):
+    pygame.init()
     fullname = os.path.join('data/skin', name)
     try:
         image = pygame.image.load(fullname)
@@ -21,6 +32,7 @@ def load_image(name, color_key=None):
         image.set_colorkey(color_key)
     return image
 
+
 class Labyrinth:
     # создание карты
     def __init__(self, file_name, allow_to_go=0, exit_poit=-1, hero_start=2):
@@ -28,26 +40,10 @@ class Labyrinth:
         with open(file_name) as file:
             for line in file:
                 self.map.append(list(line))
-        print(self.map)
-        # значения по умолчанию
-
-
-class Board:
-    # создание поля
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.board = [[0 for _ in range(width)] for _ in range(height)]
-        # значения по умолчаниюяё
-        self.left = 10
-        self.top = 10
-        self.cell_size = 30
-
-    # настройка внешнего вида
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
+        self.left = LEFT
+        self.top = TOP
+        self.cell_size = CELL_SIZE
+        self.pos_of_hero = None
 
     def render(self, scr):
         y = self.left
@@ -55,24 +51,13 @@ class Board:
             x = self.top
             for j in range(len(self.map[i])):
                 if self.map[i][j] == '#':
-                    pygame.draw.rect(scr, (255, 255, 255), (x, y, self.cell_size, self.cell_size))
+                    pygame.draw.rect(scr, WHITE, (x, y, self.cell_size, self.cell_size))
                 if self.map[i][j] == '.':
-                    pygame.draw.rect(scr, (0, 0, 0), (x, y, self.cell_size, self.cell_size))
+                    pygame.draw.rect(scr, BLACK, (x, y, self.cell_size, self.cell_size))
+                if self.map[i][j] == '@':
+                    self.pos_of_hero = (j, i)
                 x += self.cell_size
             y += self.cell_size
-
-
-class Game:
-    def __init__(self, labyrinth):
-        self.labyrinth = labyrinth
-
-    def render(self, screen1):
-        self.labyrinth.render(screen1)
-
-
-hero_group = pygame.sprite.Group()
-player_image = load_image('Pink_Monster.png')
-tile_width = tile_height = 50
 
 
 class Sprite(pygame.sprite.Sprite):
@@ -88,27 +73,65 @@ class Player(Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(hero_group)
         self.image = player_image
-        self.rect = self.image.get_rect().move(pos_x + 10, pos_y + 5)
+        self.rect = self.image.get_rect().move(CELL_SIZE * pos_x, CELL_SIZE * pos_y)
         self.pos = (pos_x, pos_y)
 
     def move(self, x, y):
-        self.pos = (x, y)
-        self.rect = self.image.get_rect().move(self.pos[0] + 10,
-                                               self.pos[1] + 5)
+        self.pos = (x, y)  # for table
+        self.rect = self.image.get_rect().move(CELL_SIZE * x,
+                                               CELL_SIZE * y)  # draw it
+
+
+class Game:
+    def __init__(self, map_for_labyrinth):
+        self.labyrinth = Labyrinth(map_for_labyrinth)
+        self.hero = None
+
+    def render(self, screen1):
+        self.labyrinth.render(screen1)
+        self.hero = Player(*self.labyrinth.pos_of_hero)
+
+    def move(self, hero, movement):
+        x, y = hero.pos
+        level_map = self.labyrinth.map
+
+        if movement == 'up':
+            if y > 0 and level_map[y - 1][x] == '.':
+                hero.move(x, y - 1)
+                self.labyrinth.map[y][x] = '.'
+                self.labyrinth.map[y - 1][x] = '@'
+        elif movement == 'down':
+            if level_map[y + 1][x] == '.':
+                hero.move(x, y + 1)
+                self.labyrinth.map[y][x] = '.'
+                self.labyrinth.map[y + 1][x] = '@'
+        elif movement == 'left':
+            if x > 0 and level_map[y][x - 1] == '.':
+                hero.move(x - 1, y)
+                self.labyrinth.map[y][x] = '.'
+                self.labyrinth.map[y][x - 1] = '@'
+        elif movement == 'right':
+            if level_map[y][x + 1] == '.':
+                self.labyrinth.map[y][x] = '.'
+                self.labyrinth.map[y][x + 1] = '@'
+                hero.move(x + 1, y)
+
 
 if __name__ == '__main__':
+
     pygame.init()
+    screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('Game')
-    size = width, height = 500, 500
-    screen = pygame.display.set_mode(size)
-    labyrinth = Labyrinth('maps/map_1.txt')
-    labyrinth.set_view(0, 0, 50)
-    game = Game(labyrinth)
+
+    hero_group = pygame.sprite.Group()
+    player_image = load_image('Pink_Monster.png')
+
+    game = Game("maps/map_1.txt")
+    game.render(screen)
+
     clock = pygame.time.Clock()
     running = True
     fps = 30
-    board = Board(width, height)
-    hero = Player(labyrinth.left, board.top)
 
     while running:
         pygame.time.delay(120)
@@ -118,18 +141,18 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pass
         keys = pygame.key.get_pressed()
-        x, y = hero.pos
-        vel = board.cell_size
+        x, y = game.hero.pos
+
         if keys[pygame.K_LEFT]:
-            hero.move(x - vel, y)
+            game.move(game.hero, 'left')
         if keys[pygame.K_RIGHT]:
-            hero.move(x + vel, y)
+            game.move(game.hero, 'right')
         if keys[pygame.K_UP]:
-            hero.move(x, y - vel)
+            game.move(game.hero, 'up')
         if keys[pygame.K_DOWN]:
-            hero.move(x, y + vel)
-        screen.fill((0, 0, 0))
+            game.move(game.hero, 'down')
+        screen.fill(BLACK)
+        hero_group.draw(screen)
         game.render(screen)
         clock.tick(fps)
-        hero_group.draw(screen)
         pygame.display.flip()
