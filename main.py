@@ -35,7 +35,7 @@ def load_image(name, color_key=None):
 
 class Labyrinth:
     # создание карты
-    def __init__(self, file_name, allow_to_go=0, exit_poit=-1, hero_start=2):
+    def __init__(self, file_name):
         self.map = []
         with open(file_name) as file:
             for line in file:
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     hero_group = pygame.sprite.Group()
     tiles_group = pygame.sprite.Group()
 
-    tile_images = {'wall': load_image('texture/box.png'), 'empty': load_image('texture/grass.png')}
+    tile_images = {'wall': load_image('texture\\box.png'), 'empty': load_image('texture\\grass.png')}
     player_image = load_image('skin/Pink_Monster.png')
 
     game = Game("maps/map_1.txt")
@@ -157,7 +157,6 @@ if __name__ == '__main__':
     fps = 30
 
     while running:
-        pygame.time.delay(120)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
