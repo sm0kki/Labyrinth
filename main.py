@@ -10,8 +10,8 @@ LEFT = 0
 CELL_SIZE = 50
 SIZE = WIDTH, HEIGHT = 800, 800
 
-MAX_X = None
-MAX_Y = None
+MAX_X = 42
+MAX_Y = 11
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -19,7 +19,7 @@ BLACK = (0, 0, 0)
 
 def load_image(name, color_key=None):
     pygame.init()
-    fullname = os.path.join('data/skin', name)
+    fullname = os.path.join('data', name)
     try:
         image = pygame.image.load(fullname)
     except pygame.error as message:
@@ -51,35 +51,38 @@ class Labyrinth:
             x = self.top
             for j in range(len(self.map[i])):
                 if self.map[i][j] == '#':
-                    pygame.draw.rect(scr, WHITE, (x, y, self.cell_size, self.cell_size))
+                    Tile('wall', j, i)
                 if self.map[i][j] == '.':
-                    pygame.draw.rect(scr, BLACK, (x, y, self.cell_size, self.cell_size))
+                    Tile('empty', j, i)
                 if self.map[i][j] == '@':
+                    Tile('empty', j, i)
                     self.pos_of_hero = (j, i)
                 x += self.cell_size
             y += self.cell_size
 
 
-class Sprite(pygame.sprite.Sprite):
-    def __init__(self, group):
-        super().__init__(group)
-        self.rect = None
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(tiles_group, all_sprites)
+        self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(
+            CELL_SIZE * pos_x, CELL_SIZE * pos_y)
 
-    def get_event(self, event):
-        pass
 
-
-class Player(Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
-        super().__init__(hero_group)
+        super().__init__(hero_group, all_sprites)
         self.image = player_image
         self.rect = self.image.get_rect().move(CELL_SIZE * pos_x, CELL_SIZE * pos_y)
         self.pos = (pos_x, pos_y)
 
     def move(self, x, y):
         self.pos = (x, y)  # for table
-        self.rect = self.image.get_rect().move(CELL_SIZE * x,
-                                               CELL_SIZE * y)  # draw it
+        camera.dx -= CELL_SIZE * (x - self.pos[0])
+        camera.dy -= CELL_SIZE * (y - self.pos[1])
+        self.pos = (x, y)
+        for sprite in all_sprites:
+            camera.apply(sprite)
 
 
 class Game:
@@ -117,29 +120,51 @@ class Game:
                 hero.move(x + 1, y)
 
 
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2)
+
+
 if __name__ == '__main__':
 
     pygame.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption('Game')
 
+    all_sprites = pygame.sprite.Group()
     hero_group = pygame.sprite.Group()
-    player_image = load_image('Pink_Monster.png')
+    tiles_group = pygame.sprite.Group()
+
+    tile_images = {'wall': load_image('texture/box.png'), 'empty': load_image('texture/grass.png')}
+    player_image = load_image('skin/Pink_Monster.png')
 
     game = Game("maps/map_1.txt")
     game.render(screen)
 
     clock = pygame.time.Clock()
+
+    camera = Camera()
     running = True
     fps = 30
 
     while running:
         pygame.time.delay(120)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pass
+
         keys = pygame.key.get_pressed()
         x, y = game.hero.pos
 
@@ -151,8 +176,17 @@ if __name__ == '__main__':
             game.move(game.hero, 'up')
         if keys[pygame.K_DOWN]:
             game.move(game.hero, 'down')
+
         screen.fill(BLACK)
+
+        camera.update(game.hero)
+        for sprite in all_sprites:
+            camera.apply(sprite)
+
+        tiles_group.draw(screen)
         hero_group.draw(screen)
         game.render(screen)
-        clock.tick(fps)
+
         pygame.display.flip()
+
+        clock.tick(fps)
