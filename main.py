@@ -84,15 +84,21 @@ class Player(pygame.sprite.Sprite):
         for sprite in all_sprites:
             camera.apply(sprite)
 
+    def render(self, pos_x, pos_y):
+        self.rect = self.image.get_rect().move(CELL_SIZE * pos_x, CELL_SIZE * pos_y)
+        self.pos = (pos_x, pos_y)
+
 
 class Game:
     def __init__(self, map_for_labyrinth):
         self.labyrinth = Labyrinth(map_for_labyrinth)
-        self.hero = None
+        self.labyrinth.render(screen)
+        self.player = Player(*self.labyrinth.pos_of_hero)
+        self.pos = self.labyrinth.pos_of_hero
 
     def render(self, screen1):
+        self.player.render(*self.player.pos)
         self.labyrinth.render(screen1)
-        self.hero = Player(*self.labyrinth.pos_of_hero)
 
     def move(self, hero, movement):
         x, y = hero.pos
@@ -115,9 +121,9 @@ class Game:
                 self.labyrinth.map[y][x - 1] = '@'
         elif movement == 'right':
             if level_map[y][x + 1] == '.':
+                hero.move(x + 1, y)
                 self.labyrinth.map[y][x] = '.'
                 self.labyrinth.map[y][x + 1] = '@'
-                hero.move(x + 1, y)
 
 
 class Camera:
@@ -157,6 +163,7 @@ if __name__ == '__main__':
     fps = 30
 
     while running:
+        pygame.time.delay(120)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -165,20 +172,20 @@ if __name__ == '__main__':
                 pass
 
         keys = pygame.key.get_pressed()
-        x, y = game.hero.pos
+        x, y = game.player.pos
 
         if keys[pygame.K_LEFT]:
-            game.move(game.hero, 'left')
+            game.move(game.player, 'left')
         if keys[pygame.K_RIGHT]:
-            game.move(game.hero, 'right')
+            game.move(game.player, 'right')
         if keys[pygame.K_UP]:
-            game.move(game.hero, 'up')
+            game.move(game.player, 'up')
         if keys[pygame.K_DOWN]:
-            game.move(game.hero, 'down')
+            game.move(game.player, 'down')
 
         screen.fill(BLACK)
 
-        camera.update(game.hero)
+        camera.update(game.player)
         for sprite in all_sprites:
             camera.apply(sprite)
 
