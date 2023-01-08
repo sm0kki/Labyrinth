@@ -7,7 +7,7 @@ import os
 # margin for upper left corner
 TOP = 0
 LEFT = 0
-CELL_SIZE = 50
+CELL_SIZE = 200
 SIZE = WIDTH, HEIGHT = 800, 800
 
 MAX_X = 42
@@ -150,8 +150,10 @@ if __name__ == '__main__':
     hero_group = pygame.sprite.Group()
     tiles_group = pygame.sprite.Group()
 
-    tile_images = {'wall': load_image('texture\\box.png'), 'empty': load_image('texture\\grass.png')}
+    tile_images = {'wall': pygame.transform.scale(load_image('texture\\box1.png'), (CELL_SIZE, CELL_SIZE)),
+                   'empty': pygame.transform.scale(load_image('texture\\grass.png'), (CELL_SIZE, CELL_SIZE))}
     player_image = load_image('skin/Pink_Monster.png')
+    player_image = pygame.transform.scale(player_image, (CELL_SIZE, CELL_SIZE))
 
     game = Game("maps/map_1.txt")
     game.render(screen)
@@ -160,27 +162,25 @@ if __name__ == '__main__':
 
     camera = Camera()
     running = True
-    fps = 30
+    fps = 60
 
     while running:
-        pygame.time.delay(120)
+        pygame.time.delay(100)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
 
         keys = pygame.key.get_pressed()
         x, y = game.player.pos
 
         if keys[pygame.K_LEFT]:
             game.move(game.player, 'left')
-        if keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT]:
             game.move(game.player, 'right')
-        if keys[pygame.K_UP]:
+        elif keys[pygame.K_UP]:
             game.move(game.player, 'up')
-        if keys[pygame.K_DOWN]:
+        elif keys[pygame.K_DOWN]:
             game.move(game.player, 'down')
 
         screen.fill(BLACK)
