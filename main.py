@@ -1,74 +1,59 @@
-import pygame
-
-import pygame
-from pprint import pprint
-from random import randint
-from copy import deepcopy
+from labyrinth import *
+from const import *
 
 
-class Board:
-    # создание поля
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.board = [[0 for _ in range(width)] for _ in range(height)]
-        # значения по умолчаниюяё
-        self.left = 10
-        self.top = 10
-        self.cell_size = 30
-
-    # настройка внешнего вида
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
-
-    def get_cell(self, mouse_pos):
-        if self.top < mouse_pos[0] < self.cell_size * self.width + self.top \
-                and self.left < mouse_pos[1] < self.cell_size * self.height + self.left:
-            d_x = (mouse_pos[0] - self.top) // self.cell_size
-            d_y = (mouse_pos[1] - self.left) // self.cell_size
-            return d_x, d_y
-
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
-    def on_click(self, n_cell):
-        if n_cell:
-            x1, y1 = n_cell[0], n_cell[1]
-            self.board[y1][x1] = 1
-
-    def render(self, scr):
-        y = self.left
-        for i in range(len(self.board)):
-            x = self.top
-            for j in range(len(self.board[i])):
-                pygame.draw.rect(scr, (255, 255, 255), (x, y, self.cell_size, self.cell_size), 1)
-                x += self.cell_size
-            y += self.cell_size
-
-
-
-
-if __name__ == '__main__':
+def main():
     pygame.init()
-    pygame.display.set_caption('Game')
-    size = width, height = 800, 800
-    screen = pygame.display.set_mode(size)
-    board = Board(32, 32)
-    board.set_view(0, 0, 50)
-    clock = pygame.time.Clock()
+    screen = pygame.display.set_mode(DISPLAY)
+    pygame.display.set_caption("Labyrinth")
+    bg = Surface((WIN_WIDTH, WIN_HEIGHT))
+    bg.fill(Color(BACKGROUND_COLOR))
+
+    left = right = up = down = False
+
+    timer = pygame.time.Clock()
+
+    labyrinth = Labyrinth('%s/levels/map_2.txt' % FILE_DIR)
+
+    camera = Camera(camera_configure, labyrinth.total_level_width, labyrinth.total_level_height)
+
+    hero = labyrinth.hero
     running = True
-    fps = 30
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        timer.tick(60)
+        for e in pygame.event.get():
+            if e.type == QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    board.get_click(event.pos)
-        screen.fill((0, 0, 0))
-        board.render(screen)
-        clock.tick(fps)
-        pygame.display.flip()
+
+            if e.type == KEYDOWN:
+                if e.key == K_UP:
+                    up = True
+                elif e.key == K_LEFT:
+                    left = True
+                elif e.key == K_RIGHT:
+                    right = True
+                elif e.key == K_DOWN:
+                    down = True
+
+            if e.type == KEYUP:
+                if e.key == K_UP:
+                    up = False
+                elif e.key == K_LEFT:
+                    left = False
+                elif e.key == K_RIGHT:
+                    right = False
+                elif e.key == K_DOWN:
+                    down = False
+
+        screen.blit(bg, (0, 0))
+
+        monsters.update(walls)
+        camera.update(hero)
+        hero.update(up, left, right, down, walls)
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
+        pygame.display.update()
+
+
+if __name__ == "__main__":
+    main()
