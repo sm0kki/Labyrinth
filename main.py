@@ -8,7 +8,8 @@ def main():
     pygame.display.set_caption("Labyrinth")
     bg = Surface((WIN_WIDTH, WIN_HEIGHT))
     bg.fill(Color(BACKGROUND_COLOR))
-
+    mixer.music.load('%s/sounds/back_ground.mp3' % FILE_DIR)
+    mixer.music.play(-1)
     left = right = up = down = False
 
     timer = pygame.time.Clock()
