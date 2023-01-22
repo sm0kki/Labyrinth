@@ -1,5 +1,7 @@
 import arcade
 import arcade.gui
+import main
+from labyrinth import *
 
 
 class QuitButton(arcade.gui.UIFlatButton):
@@ -30,10 +32,9 @@ class MyWindow(arcade.Window):
         quit_button = QuitButton(text="Quit", width=200)
         self.v_box.add(quit_button)
 
-        button_1.on_click = self.on_click_start
-        button_2.on_click = self.on_click_start
-        button_3.on_click = self.on_click_start
-
+        button_1.on_click = self.map1
+        button_2.on_click = self.map2
+        button_3.on_click = self.map3
 
         self.manager.add(
             arcade.gui.UIAnchorWidget(
@@ -42,8 +43,17 @@ class MyWindow(arcade.Window):
                 child=self.v_box)
         )
 
-    def on_click_start(self, event):
-        print("Start:", event)
+    def map1(self, event):
+        arcade.exit()
+        main.main_window('%s/levels/map_1.txt')
+
+    def map2(self, event):
+        arcade.exit()
+        main.main_window('%s/levels/map_2.txt')
+
+    def map3(self, event):
+        arcade.exit()
+        main.main_window('%s/levels/map_3.txt')
 
     def on_draw(self):
         self.clear()

@@ -2,7 +2,7 @@ from labyrinth import *
 from const import *
 
 
-def main(path):
+def main_window(path):
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY)
     pygame.display.set_caption("Labyrinth")
@@ -57,4 +57,4 @@ def main(path):
 
 
 if __name__ == "__main__":
-    main('%s/levels/map_2.txt')
+    main_window('%s/levels/map_2.txt')
