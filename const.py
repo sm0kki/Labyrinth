@@ -15,6 +15,6 @@ MOVE_SPEED = 3
 
 # player & monsters & walls
 
-WIDTH = 32
-HEIGHT = 32
+WIDTH = 100
+HEIGHT = 100
 

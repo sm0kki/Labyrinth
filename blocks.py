@@ -7,6 +7,7 @@ class Wall(sprite.Sprite):
         sprite.Sprite.__init__(self)
         self.image = Surface((WIDTH, HEIGHT))
         self.image = image.load("%s/blocks/rock.png" % FILE_DIR)
+        self.image = transform.scale(self.image, (WIDTH, HEIGHT))
         self.rect = Rect(x, y, WIDTH, HEIGHT)
 
 
@@ -14,15 +15,18 @@ class BlockDie(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x, y)
         self.image = image.load("%s/blocks/dieBlock.png" % FILE_DIR)
+        self.image = transform.scale(self.image, (WIDTH, HEIGHT))
 
 
 class Exit(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x, y)
         self.image = image.load("%s/blocks/exit.png" % FILE_DIR)
+        self.image = transform.scale(self.image, (WIDTH, HEIGHT))
 
 
 class Grass(Wall):
     def __init__(self, x, y):
         Wall.__init__(self, x, y)
         self.image = image.load("%s/blocks/grass.png" % FILE_DIR)
+        self.image = transform.scale(self.image, (WIDTH, HEIGHT))

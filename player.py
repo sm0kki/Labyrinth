@@ -11,9 +11,9 @@ class Player(sprite.Sprite):
         self.startX = x
         self.startY = y
         self.yvel = 0
-        self.image = Surface((WIDTH - 3, HEIGHT - 3))
+        self.image = Surface((WIDTH - 70, HEIGHT - 70))
 
-        self.rect = Rect(x + 3, y + 3, WIDTH - 3, HEIGHT - 3)
+        self.rect = Rect(x, y, WIDTH - 70, HEIGHT - 70)
         self.image = image.load("%s/heroes/hero.png" % FILE_DIR)
         self.winner = False
 
