@@ -2,7 +2,7 @@ from labyrinth import *
 from const import *
 
 
-def main():
+def main(path):
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY)
     pygame.display.set_caption("Labyrinth")
@@ -14,7 +14,7 @@ def main():
 
     timer = pygame.time.Clock()
 
-    labyrinth = Labyrinth('%s/levels/map_2.txt' % FILE_DIR)
+    labyrinth = Labyrinth(path % FILE_DIR)
 
     camera = Camera(camera_configure, labyrinth.total_level_width, labyrinth.total_level_height)
 
@@ -57,4 +57,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main('%s/levels/map_2.txt')
