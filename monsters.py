@@ -1,6 +1,15 @@
 from pygame import *
 from const import *
 
+ANIMATION_DELAY = 0.1
+ICON_DIR = os.path.dirname(__file__)
+COLOR = "#888888"
+
+ANIMATION_RIGHT = [('%s/data/monsters/run_right/1.png' % ICON_DIR),
+                   ('%s/data/monsters/run_right/2.png' % ICON_DIR),
+                   ('%s/data/heroes/run_right/3.png' % ICON_DIR),
+                   ('%s/data/heroes/run_right/4.png' % ICON_DIR),
+                   ('%s/data/heroes/run_right/5.png' % ICON_DIR)]
 
 class Monster(sprite.Sprite):
     def __init__(self, x, y, x_speed, y_speed, maxLengthLeft, maxLengthUp):

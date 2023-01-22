@@ -12,13 +12,15 @@ ANIMATION_RIGHT = [('%s/data/heroes/run_right/1.png' % ICON_DIR),
                    ('%s/data/heroes/run_right/2.png' % ICON_DIR),
                    ('%s/data/heroes/run_right/3.png' % ICON_DIR),
                    ('%s/data/heroes/run_right/4.png' % ICON_DIR),
-                   ('%s/data/heroes/run_right/5.png' % ICON_DIR)]
+                   ('%s/data/heroes/run_right/5.png' % ICON_DIR),
+                   ('%s/data/heroes/run_right/6.png' % ICON_DIR)]
 
 ANIMATION_LEFT = [('%s/data/heroes/run_left/1.png' % ICON_DIR),
                   ('%s/data/heroes/run_left/2.png' % ICON_DIR),
                   ('%s/data/heroes/run_left/3.png' % ICON_DIR),
                   ('%s/data/heroes/run_left/4.png' % ICON_DIR),
-                  ('%s/data/heroes/run_left/5.png' % ICON_DIR)]
+                  ('%s/data/heroes/run_left/5.png' % ICON_DIR),
+                  ('%s/data/heroes/run_left/6.png' % ICON_DIR)]
 
 ANIMATION_DEATH_RIGHT = [('%s/data/heroes/death_right/1.png' % ICON_DIR),
                          ('%s/data/heroes/death_right/2.png' % ICON_DIR),
