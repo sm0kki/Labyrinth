@@ -59,7 +59,7 @@ class Labyrinth:
                     self.hero = Player(x, y)
                     entities.add(self.hero)
                 if col == "M":
-                    mn = Monster(x, y, 0, 2, 0, 200)
+                    mn = Monster(x, y, 0, 2, 0, 100)
                     entities.add(mn)
                     walls.append(mn)
                     monsters.add(mn)

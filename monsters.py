@@ -6,7 +6,8 @@ class Monster(sprite.Sprite):
     def __init__(self, x, y, x_speed, y_speed, maxLengthLeft, maxLengthUp):
         sprite.Sprite.__init__(self)
         self.image = Surface((WIDTH, HEIGHT))
-        self.image = image.load("%s/monsters/stay_left/1.png" % FILE_DIR)
+        self.image = image.load("%s/monsters/monster.png" % FILE_DIR)
+        self.image = transform.scale(self.image, (WIDTH, HEIGHT))
         self.rect = Rect(x, y, WIDTH, HEIGHT)
         self.startX = x
         self.startY = y

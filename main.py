@@ -2,18 +2,19 @@ from labyrinth import *
 from const import *
 
 
-def main():
+def main_window(path):
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY)
     pygame.display.set_caption("Labyrinth")
     bg = Surface((WIN_WIDTH, WIN_HEIGHT))
     bg.fill(Color(BACKGROUND_COLOR))
-
+    mixer.music.load('%s/sounds/back_ground.mp3' % FILE_DIR)
+    mixer.music.play(-1)
     left = right = up = down = False
 
     timer = pygame.time.Clock()
 
-    labyrinth = Labyrinth('%s/levels/map_2.txt' % FILE_DIR)
+    labyrinth = Labyrinth(path % FILE_DIR)
 
     camera = Camera(camera_configure, labyrinth.total_level_width, labyrinth.total_level_height)
 
@@ -56,4 +57,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main_window('%s/levels/map_2.txt')
